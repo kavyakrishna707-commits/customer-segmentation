@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="brand">Cluster<span>IQ</span></div>
+        <p>Machine Learning Dashboard</p>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p class="eyebrow">UNSUPERVISED MACHINE LEARNING</p>
+            <h1>Customer Segmentation</h1>
+            <p>Discover customer groups using K-Means clustering.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Customer Segments</h2>
+            <p class="muted">
+                These groups are learned from the uploaded dataset.
+            </p>
+
+            <div class="segments">
+                {% for item in summary %}
+                <div class="segment-card">
+                    <span class="tag">SEGMENT {{ item.Cluster + 1 }}</span>
+                    <h3>{{ item.Customers }} customers</h3>
+                    <p>Average income: {{ item.AverageIncome }}</p>
+                    <p>Average spending: {{ item.AverageSpending }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <img class="chart"
+                 src="{{ url_for('static', filename='cluster_plot.png') }}"
+                 alt="K-Means customer cluster chart">
+        </section>
+
+        <section class="panel">
+            <h2>Find a Customer's Segment</h2>
+            <p class="muted">
+                Enter a customer's annual income and spending score.
+            </p>
+
+            <form method="POST">
+                <label for="income">Annual income (thousands)</label>
+                <input type="number" id="income" name="income"
+                       min="0" step="any" required
+                       placeholder="e.g. 60">
+
+                <label for="spending">Spending score (1–100)</label>
+                <input type="number" id="spending" name="spending"
+                       min="1" max="100" step="any" required
+                       placeholder="e.g. 75">
+
+                <button type="submit">Predict Customer Segment</button>
+            </form>
+
+            {% if prediction %}
+            <div class="result">
+                <p>Predicted Customer Group</p>
+                <h3>Segment {{ prediction.segment }}</h3>
+                <p>Annual income: {{ prediction.income }}</p>
+                <p>Spending score: {{ prediction.spending }}</p>
+                <p class="muted">
+                    This is the cluster assigned by the trained K-Means model.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        Customer Segmentation Project | Python & K-Means
+    </footer>
+</body>
+</html>
